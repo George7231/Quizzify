@@ -125,3 +125,55 @@ input {
 input::placeholder {
   color: #aaa;
 }
+
+/* FORM STYLES */
+.form-api {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0.4rem 1.4rem 0 rgba(86, 185, 235, 0.2);
+}
+
+.form-signin-heading {
+  font-size: 2.8rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.form-control {
+  margin-bottom: 1.5rem;
+}
+
+/* SELECT STYLES */
+select {
+  padding: 1.5rem;
+  font-size: 1.8rem;
+  width: 20rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Favicon Style */
+/* You may need to adjust the size and position based on your favicon image */
+link[rel="icon"] {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+/* MEDIA QUERY FOR SMALL SCREENS */
+@media only screen and (max-width: 768px) {
+  .form-api {
+    width: 90%;
+  }
+
+  input,
+  select {
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
