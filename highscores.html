@@ -5,20 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>High Scores</title>
-    <link rel="stylesheet" href="./app.css" />
-    <link rel="stylesheet" href="./highscores.css" />
+    <link rel="stylesheet" href="./css/app.css" />
+    <link rel="stylesheet" href="./css/highscores.css" />
     <link rel="icon" href="icon_path" type="image/x-icon">
   </head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3775445581945009"
-     crossorigin="anonymous"></script>
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3775445581945009"
+     crossorigin="anonymous"></script> -->
   <body>
-    <div class="container">
-      <div id="highScores" class="flex-center flex-column">
+    <div class="form">
+      <div id="highScores" class="">
         <h1 id="finalScore">High Scores</h1>
         <ul id="highScoresList"></ul>
-        <a class="btn" href="./index.html">Go Home</a>
       </div>
+      <div id="totalquestions" class="">
+        <h1 id="finalScore">Total Questions</h1>
+        <ul id="totalquestionsList"></ul>
+      </div>
+      <div id="percentcorrect" class="">
+        <h1 id="finalScore">Percentage Correct</h1>
+        <ul id="percentcorrectList"></ul>
+      </div>
+      <a class="btn" href="./index.html">Go Home</a>
     </div>
-    <script src="./highscores.js"></script>
+    <script src="./scripts/highscores.js"></script>
   </body>
 </html>

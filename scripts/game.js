@@ -18,15 +18,31 @@ const triviaAmount = params.get('triviaAmount');
 const triviaCategory = params.get('triviaCategory');
 const triviaDifficulty = params.get('triviaDifficulty');
 
-const apiUrl = `https://opentdb.com/api.php?amount=${triviaAmount}&category=${triviaCategory}&difficulty=${triviaDifficulty}&type=multiple`;
+const apiUrl = `https://opentdb.com/api.php?amount=${triviaAmount}`;
+
+if (triviaCategory !== 'any') {
+    apiUrl.concat(`&category=${triviaCategory}`);
+}
+
+if (triviaDifficulty !== 'any') {
+    apiUrl.concat(`&difficulty=${triviaDifficulty}`);
+}
+
+apiUrl.concat('&type=multiple');
 
 fetch(apiUrl)
     .then((res) => res.json())
     .then((loadedQuestions) => {
         questions = loadedQuestions.results.map((loadedQuestion) => {
+            // const formattedQuestion = {
+            //     question: loadedQuestion.question,
+            //     choices: [],
+            // };
+            const parser = new DOMParser();
+            const decodedQuestion = parser.parseFromString(`<!doctype html><body>${loadedQuestion.question}`, 'text/html').body.textContent;
+
             const formattedQuestion = {
-                question: loadedQuestion.question,
-                choices: [],
+                question: decodedQuestion,
             };
 
             const answerChoices = [...loadedQuestion.incorrect_answers];
