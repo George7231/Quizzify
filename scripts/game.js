@@ -103,6 +103,8 @@ choices.forEach((choice) => {
         acceptingAnswers = false;
         const selectedChoice = e.target;
         const selectedAnswer = selectedChoice.innerText;
+        const correctAnswerIndex = currentQuestion.answer - 1;
+        const correctChoice = choices[correctAnswerIndex];
 
         const classToApply = selectedAnswer === currentQuestion.choices[currentQuestion.answer - 1] ? 'correct' : 'incorrect';
 
@@ -112,8 +114,14 @@ choices.forEach((choice) => {
 
         selectedChoice.parentElement.classList.add(classToApply);
 
+        // Highlight correct answer if the user was incorrect
+        if (classToApply === 'incorrect') {
+            correctChoice.parentElement.classList.add('correct-answer');
+        }
+
         setTimeout(() => {
             selectedChoice.parentElement.classList.remove(classToApply);
+            correctChoice.parentElement.classList.remove('correct-answer');
             getNewQuestion();
         }, 1000);
     });

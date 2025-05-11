@@ -33,6 +33,10 @@
   background-color: #dc3545;
 }
 
+.correct-answer {
+  background-color: #b4ffc6;
+}
+
 /* HUD */
 
 #hud {
