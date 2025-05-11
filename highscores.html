@@ -6,26 +6,38 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>High Scores</title>
     <link rel="stylesheet" href="./css/app.css" />
-    <link rel="stylesheet" href="./css/highscores.css" />
-    <link rel="icon" href="icon_path" type="image/x-icon">
+    <link rel="icon" type="image/jpg" href="./assets/logo.png">
   </head>
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3775445581945009"
-     crossorigin="anonymous"></script> -->
   <body>
-    <div class="form">
-      <div id="highScores" class="">
-        <h1 id="finalScore">High Scores</h1>
-        <ul id="highScoresList"></ul>
-      </div>
-      <div id="totalquestions" class="">
-        <h1 id="finalScore">Total Questions</h1>
-        <ul id="totalquestionsList"></ul>
-      </div>
-      <div id="percentcorrect" class="">
-        <h1 id="finalScore">Percentage Correct</h1>
-        <ul id="percentcorrectList"></ul>
-      </div>
-      <a class="btn" href="./index.html">Go Home</a>
+    <div class="container">
+      <form class="form">
+
+        <h1>Leaderboard</h1>
+
+        <div id="highScores">
+          <h2 id="finalScore">High Scores</h2>
+          <ul id="highScoresList"></ul>
+        </div>
+
+        <br>
+
+        <div id="totalquestions">
+          <h2 id="finalScore">Total Questions</h2>
+          <ul id="totalquestionsList"></ul>
+        </div>
+
+        <br>
+
+        <div id="percentcorrect">
+          <h2 id="finalScore">Percentage Correct</h2>
+          <ul id="percentcorrectList"></ul>
+        </div>
+
+        <br>
+
+        <a class="btn" href="./index.html">Go Home</a>
+
+      </form>
     </div>
     <script src="./scripts/highscores.js"></script>
   </body>
