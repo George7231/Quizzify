@@ -156,11 +156,20 @@ fetch(apiUrl)
                 question: decodedQuestion,
             };
 
-            const answerChoices = [...decodedIncorrect];
-            formattedQuestion.answer = Math.floor(Math.random() * 4) + 1;
-            answerChoices.splice(formattedQuestion.answer - 1, 0, decodedCorrect);
-            formattedQuestion.choices = answerChoices;
+            const isTrueFalse = loadedQuestion.type === 'boolean';
+            let answerChoices;
 
+            if (isTrueFalse) {
+                // Force consistent order: True first, then False
+                answerChoices = ['True', 'False'];
+                formattedQuestion.answer = decodedCorrect === 'True' ? 1 : 2;
+            } else {
+                answerChoices = [...decodedIncorrect];
+                formattedQuestion.answer = Math.floor(Math.random() * 4) + 1;
+                answerChoices.splice(formattedQuestion.answer - 1, 0, decodedCorrect);
+            }
+
+            formattedQuestion.choices = answerChoices;
             return formattedQuestion;
         });
 
