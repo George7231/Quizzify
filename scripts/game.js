@@ -7,6 +7,8 @@ const choicesContainer = document.getElementById('choicesContainer');
 const question = document.getElementById('question');
 const progressText = document.getElementById('progressText');
 const scoreText = document.getElementById('score');
+const streakText = document.getElementById('streak');
+const streakHud = document.getElementById('streakHud');
 const progressBarFull = document.getElementById('progressBarFull');
 const loader = document.getElementById('loader');
 const game = document.getElementById('game');
@@ -15,6 +17,7 @@ const game = document.getElementById('game');
 let currentQuestion = {};
 let acceptingAnswers = false;
 let score = 0;
+let correctStreak = -1;
 let questionCounter = 0;
 let availableQuestions = [];
 let questions = [];
@@ -53,15 +56,21 @@ const renderChoices = (choicesArray) => {
                 : 'incorrect';
 
             if (classToApply === 'correct') {
-                incrementScore(CORRECT_BONUS);
+                incrementScore(CORRECT_BONUS); // Increment score with streak bonus
             }
 
             selectedChoice.parentElement.classList.add(classToApply);
 
             if (classToApply === 'incorrect' && correctChoice) {
                 correctChoice.parentElement.classList.add('correct-answer');
+                if (correctStreak !== -1) {
+                    correctStreak = 0; // Reset streak on incorrect answer
+                }
             }
 
+            streakText.innerText = `${correctStreak}`; // Update streak display
+
+            // Remove the class after a short delay
             setTimeout(() => {
                 selectedChoice.parentElement.classList.remove(classToApply);
                 if (correctChoice) {
@@ -102,6 +111,10 @@ const getNewQuestion = () => {
 
 // Function to increment score
 const incrementScore = (num) => {
+    if (correctStreak !== -1) {
+        num += correctStreak; // Add streak bonus
+        correctStreak++; // Increase streak
+    }
     score += num;
     scoreText.innerText = score;
 };
@@ -118,9 +131,18 @@ const startGame = () => {
 
 // Get parameters for url
 const params = new URLSearchParams(window.location.search);
-const triviaAmount = params.get('triviaAmount');
-const triviaCategory = params.get('triviaCategory');
-const triviaDifficulty = params.get('triviaDifficulty');
+const triviaAmount = params.get('Amount');
+const triviaCategory = params.get('Category');
+const triviaDifficulty = params.get('Difficulty');
+const triviaStreak = params.get('Streak');
+
+if (triviaStreak === 'true') {
+    correctStreak = 0;
+} else {
+    // Hide html element if streak is not enabled
+    streakHud.classList.add('hidden');
+    streak.classList.add('hidden');
+}
 
 let apiUrl = `https://opentdb.com/api.php?amount=${triviaAmount}`;
 
