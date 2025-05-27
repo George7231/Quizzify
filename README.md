@@ -1,12 +1,12 @@
 # Quiz Web App
 
 ![GitHub](https://img.shields.io/github/license/George7231/Quizzify)
-![GitHub stars](https://img.shields.io/github/stars/George7231/Quizzify)
-![GitHub forks](https://img.shields.io/github/forks/George7231/Quizzify)
+<!-- ![GitHub stars](https://img.shields.io/github/stars/George7231/Quizzify)
+![GitHub forks](https://img.shields.io/github/forks/George7231/Quizzify) -->
 
 This repository contains a Quiz Web App built using HTML, CSS, JavaScript, and the Open Trivia Database. The app allows users to test their knowledge by answering quiz questions from various categories.
 
-![image](https://github.com/George7231/Quizzify/assets/93814546/8820d623-5e23-41c7-b86c-c58f656172da)
+<!-- ![image](https://github.com/George7231/Quizzify/assets/93814546/8820d623-5e23-41c7-b86c-c58f656172da) -->
 
 
 ## Features
