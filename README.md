@@ -1,12 +1,12 @@
 # Quiz Web App
 
-![GitHub](https://img.shields.io/github/license/alok-2002/Quizzify)
-![GitHub stars](https://img.shields.io/github/stars/alok-2002/Quizzify)
-![GitHub forks](https://img.shields.io/github/forks/alok-2002/Quizzify)
+![GitHub](https://img.shields.io/github/license/George7231/Quizzify)
+![GitHub stars](https://img.shields.io/github/stars/George7231/Quizzify)
+![GitHub forks](https://img.shields.io/github/forks/George7231/Quizzify)
 
 This repository contains a Quiz Web App built using HTML, CSS, JavaScript, and the Open Trivia Database. The app allows users to test their knowledge by answering quiz questions from various categories.
 
-![image](https://github.com/Alok-2002/Quizzify/assets/93814546/8820d623-5e23-41c7-b86c-c58f656172da)
+![image](https://github.com/George7231/Quizzify/assets/93814546/8820d623-5e23-41c7-b86c-c58f656172da)
 
 
 ## Features
@@ -34,38 +34,16 @@ To get started with the Quiz Web App, follow these steps:
    git clone https://github.com/Alok-2002/Quiz_Web_App_Using_HTML_CSS_And_Javascript
    ```
 
-2. Open the project folder:
-
-   ```
-   cd Quiz_Web_App_Using_HTML_CSS_And_Javascript
-   ```
-
-3. Launch the app by opening the `index.html` file in your preferred web browser.
+2. Launch the app by opening the `index.html` file in your preferred web browser.
 
 ## Usage
 
-1. Select a category for the quiz from the available options.
-2. Click the "Start Quiz" button to begin the quiz.
-3. Read each question carefully and select the answer you think is correct.
-4. Instant feedback will be provided after each answer.
+1. Select "Play" from the main menu
+2. Select the options you would like for your Quiz.
+3. Click the "Generate Quiz" button to begin the quiz.
+4. Read each question carefully and select the answer you think is correct.
 5. Continue answering questions until you reach the end of the quiz.
-6. At the end of the quiz, you will be presented with your score and the option to restart or choose a different category.
-
-## Customization
-
-If you wish to customize the app, you can modify the following files:
-
-- `index.html`: Edit the HTML structure of the app and update the UI elements.
-- `app.css`: Modify the CSS styles to change the visual appearance.
-- `game.js`: Update the JavaScript logic and functionality according to your requirements.
-- `game.html`: Edit the HTML structure of the app and update the UI elements.
-- `game.css`: Modify the CSS styles to change the visual appearance.
-- `end.js`: Update the JavaScript logic and functionality according to your requirements.
-- `end.html`: Edit the HTML structure of the app and update the UI elements.
-- `highscores.css`: Modify the CSS styles to change the visual appearance.
-- `highscores.js`: Update the JavaScript logic and functionality according to your requirements.
-- `highscores.html`: Edit the HTML structure of the app and update the UI elements.
-
+6. At the end of the quiz, you will be presented with your score and the option to save your score or restart.
 
 ## Contributions
 
