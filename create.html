@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Quiz</title>
+  <link rel="stylesheet" href="./css/app.css">
+  <link rel="icon" type="image/jpg" href="./assets/logo.png">
+  <style>
+    .question-preview {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .question-list {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .question-list span {
+      background: #56a5eb;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: move;
+      user-select: none;
+    }
+    .question-list span.active {
+      background: white;
+      color: #56a5eb;
+      border: 2px solid #56a5eb;
+    }
+    .bottom-bar {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .bottom-left-bar {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+    }
+    label, input, textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .answer-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .answer-input {
+      flex-grow: 1;
+    }
+    .remove-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+    }
+    #addAnswerBtn {
+      background-color: #56a5eb;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      display: block;
+      margin-top: 1rem;
+    }
+  #questionBuilder, .question-preview {
+  border: none;
+  box-shadow: none;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="form" id="quizSetup">
+      <h2>Create a New Quiz</h2>
+      
+
+      <label for="quizName">Quiz Name:</label>
+<div style="position: relative;">
+  <input type="text" id="quizName" placeholder="Enter quiz name" maxlength="100" oninput="updateCharCount('quizName', 'nameCharCount', 100)">
+  <small id="nameCharCount" style="position: absolute; top: 5px; right: 10px;">0/100</small>
+</div>
+
+      <label for="quizDesc">Description:</label>
+<div style="position: relative;">
+  <textarea id="quizDesc" placeholder="Enter quiz description" maxlength="300" oninput="updateCharCount('quizDesc', 'descCharCount', 300)"></textarea>
+  <small id="descCharCount" style="position: absolute; top: 5px; right: 10px;">0/300</small>
+</div>
+
+      <label for="quizImage">Upload Cover Image:</label>
+<input type="file" id="quizImage" accept="image/*">
+<button class="btn" onclick="showQuestionForm()">Next</button>
+    </div>
+
+    <div class="form hidden" id="questionBuilder">
+      <div class="question-list" id="questionNav" style="display: flex; align-items: center;">
+  <div id="questionNavItems" style="display: flex; gap: 1rem;"></div>
+  <button id="addQuestionBtn" style="background-color: #56a5eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.3rem; cursor: pointer; font-size: 2rem; margin-left: 1rem;" onclick="addQuestion()">+</button>
+</div>
+
+      <div class="question-preview">
+        <p id="validationError" style="color: red; display: none;">Please select at least one correct answer before continuing.</p>
+        <label for="questionText">Question:</label>
+        <div style="position: relative;">
+  <input type="text" id="questionText" placeholder="Enter your question" maxlength="200" oninput="updateCharCount('questionText', 'questionCharCount', 200)">
+  <small id="questionCharCount" style="position: absolute; top: 5px; right: 10px;">0/200</small>
+</div>
+
+        <label for="questionImage">Upload Question Image (optional):</label>
+        <input type="file" id="questionImage" accept="image/*">
+
+        <h3>Answers</h3>
+        <div id="answerContainer"></div>
+        <button id="addAnswerBtn" onclick="addAnswerBox()">+</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="bottom-left-bar hidden" id="backControl">
+  <button class="btn" onclick="exitQuiz()">Exit</button>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script>
+function exitQuiz() {
+  const confirmExit = confirm('Are you sure you want to exit? Unsaved progress will be lost.');
+  if (confirmExit) {
+    window.location.href = './index.html';
+  }
+}
+
+function updateCharCount(inputId, counterId, max) {
+  const input = document.getElementById(inputId);
+  const counter = document.getElementById(counterId);
+  if (input && counter) {
+    counter.textContent = `${input.value.length}/${max}`;
+  } else if (input) {
+    const dynamicCounter = document.getElementById(input.id + '_counter');
+    if (dynamicCounter) {
+      dynamicCounter.textContent = `${input.value.length}/${max}`;
+    }
+  } else if (input) {
+    const dynamicCounter = document.getElementById(input.id + '_counter');
+    if (dynamicCounter) {
+      dynamicCounter.textContent = `${input.value.length}/${max}`;
+    }
+  }
+}
+function validateCorrectAnswer() {
+  const checkboxes = document.querySelectorAll('.correct-checkbox');
+  const hasCorrect = Array.from(checkboxes).some(checkbox => checkbox.checked);
+  const errorMsg = document.getElementById('validationError');
+  if (!hasCorrect) {
+    errorMsg.style.display = 'block';
+    return false;
+  }
+  errorMsg.style.display = 'none';
+  return true;
+}
+    const quizSetup = document.getElementById('quizSetup');
+    const questionBuilder = document.getElementById('questionBuilder');
+    const questionNav = document.getElementById('questionNavItems');
+    const answerContainer = document.getElementById('answerContainer');
+    const questionControls = document.getElementById('questionControls');
+    const backControl = document.getElementById('backControl');
+
+    let currentQuestionIndex = 0;
+    let questions = [];
+
+    new Sortable(questionNav, {
+      animation: 150,
+      onEnd: () => {
+        const newOrder = Array.from(questionNav.children).map(el => parseInt(el.dataset.index));
+        questions = newOrder.map(i => questions[i]);
+        updateQuestionNav();
+        renderQuestion();
+      }
+    });
+
+    function showQuestionForm() {
+      quizSetup.classList.add('hidden');
+      questionBuilder.classList.remove('hidden');
+      backControl.classList.remove('hidden');
+      if (questions.length === 0) {
+        questions.push({ questionText: '', answers: [] });
+      }
+      updateQuestionNav();
+      renderQuestion();
+    }
+
+    function addAnswerBox(text = '', isCorrect = false) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'answer-wrapper';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'correct-checkbox';
+      checkbox.checked = isCorrect;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.maxLength = 100;
+      input.oninput = () => updateCharCount(input.id, counter.id, 100);
+      input.placeholder = 'Enter answer option';
+      input.className = 'answer-input';
+      input.value = text;
+      input.id = `answer_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+      const counter = document.createElement('small');
+      counter.style.position = 'absolute';
+      counter.style.top = '5px';
+      counter.style.right = '10px';
+      counter.style.fontSize = '0.8rem';
+      counter.style.color = '#666';
+      counter.textContent = `${text.length}/100`;
+      counter.id = input.id + '_counter';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = 'x';
+      removeBtn.className = 'remove-btn';
+      removeBtn.onclick = () => wrapper.remove();
+
+      wrapper.appendChild(checkbox);
+      const inputWrapper = document.createElement('div');
+      inputWrapper.style.position = 'relative';
+      inputWrapper.style.flexGrow = '1';
+      inputWrapper.appendChild(input);
+      inputWrapper.appendChild(counter);
+      wrapper.appendChild(inputWrapper);
+            wrapper.appendChild(removeBtn);
+      answerContainer.appendChild(wrapper);
+
+      new Sortable(answerContainer, {
+        animation: 150,
+        handle: '.answer-input'
+      });
+    }
+
+    function addQuestion() {
+      if (!validateCorrectAnswer()) return;
+      saveCurrentQuestion();
+      currentQuestionIndex = questions.length;
+      questions.push({ questionText: '', answers: [] });
+      updateQuestionNav();
+      renderQuestion();
+    }
+
+    function updateQuestionNav() {
+  const navItems = document.getElementById('questionNavItems');
+  navItems.innerHTML = '';
+  questions.forEach((_, idx) => {
+    const navItem = document.createElement('span');
+    navItem.textContent = idx + 1;
+    navItem.dataset.index = idx;
+    navItem.style.cursor = 'pointer';
+    if (idx === currentQuestionIndex) navItem.classList.add('active');
+    navItem.onclick = () => {
+      saveCurrentQuestion();
+      currentQuestionIndex = idx;
+      renderQuestion();
+    };
+    navItems.appendChild(navItem);
+  });
+}
+
+    function renderQuestion() {
+      const q = questions[currentQuestionIndex] || { questionText: '', answers: [] };
+      document.getElementById('questionText').value = q.questionText;
+      answerContainer.innerHTML = '';
+      q.answers.forEach(a => addAnswerBox(a.text, a.correct));
+      if (q.answers.length === 0) addAnswerBox();
+      updateQuestionNav();
+    }
+
+    function saveCurrentQuestion() {
+      const questionText = document.getElementById('questionText').value;
+      const answerWrappers = document.querySelectorAll('.answer-wrapper');
+      const answers = Array.from(answerWrappers).map(wrapper => {
+        return {
+          text: wrapper.querySelector('.answer-input').value,
+          correct: wrapper.querySelector('.correct-checkbox').checked
+        };
+      });
+      questions[currentQuestionIndex] = { questionText, answers };
+    }
+
+    function goToPreviousQuestion() {
+      if (!validateCorrectAnswer()) return;
+      if (currentQuestionIndex > 0) {
+        saveCurrentQuestion();
+        currentQuestionIndex--;
+        renderQuestion();
+      }
+    }
+
+    function finishQuiz() {
+      if (!validateCorrectAnswer()) return;
+      saveCurrentQuestion();
+      const quizData = {
+        name: document.getElementById('quizName').value,
+        description: document.getElementById('quizDesc').value,
+        questions: questions.map(q => {
+          const obj = {
+            question: q.questionText,
+            answer: 1
+          };
+          q.answers.forEach((a, idx) => {
+            obj[`choice${idx + 1}`] = a.text || '';
+            if (a.correct) obj.answer = obj.answer === 1 ? idx + 1 : [obj.answer].flat().concat(idx + 1);
+          });
+          return obj;
+        })
+      };
+
+      const a = document.createElement('a');
+      const file = new Blob([JSON.stringify([quizData], null, 2)], { type: 'application/json' });
+      a.href = URL.createObjectURL(file);
+      a.download = 'custom_quiz.json';
+      a.click();
+
+      window.location.href = './index.html';
+    }
+  </script>
+<div class="bottom-bar hidden" id="questionControls">
+  <button class="btn" onclick="finishQuiz()">Finish & Save</button>
+</div>
+</body>
+</html>
