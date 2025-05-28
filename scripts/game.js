@@ -1,6 +1,12 @@
 // CONSTANTS
 const CORRECT_BONUS = 10;
-const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']; // expand as needed
+const DIFFICULTY_MULTIPLIERS = {
+    easy: 1.0,
+    medium: 1.5,
+    hard: 2.0
+};
+
+const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 
 // DOM ELEMENTS
 const choicesContainer = document.getElementById('choicesContainer');
@@ -38,64 +44,60 @@ const renderChoices = (choicesArray) => {
     choice.setAttribute('data-number', index + 1);
     choice.textContent = choiceText;
 
-        // Add event listener here
-        choicesContainer.addEventListener('click', (e) => {
-            const selectedChoice = e.target.closest('.choice-text');
-            if (!selectedChoice || !acceptingAnswers) return;
+    // Add event listener here
+    choicesContainer.addEventListener('click', (e) => {
+        const selectedChoice = e.target.closest('.choice-text');
+        if (!selectedChoice || !acceptingAnswers) return;
 
-            acceptingAnswers = false;
+        acceptingAnswers = false;
 
-            const selectedAnswer = selectedChoice.innerText;
-            const correctAnswerIndex = currentQuestion.answer - 1;
+        const selectedAnswer = selectedChoice.innerText;
+        const correctAnswerIndex = currentQuestion.answer - 1;
 
-            const currentChoices = Array.from(document.getElementsByClassName('choice-text'));
-            const correctChoice = currentChoices[correctAnswerIndex];
+        const currentChoices = Array.from(document.getElementsByClassName('choice-text'));
+        const correctChoice = currentChoices[correctAnswerIndex];
 
-            const classToApply = selectedAnswer === currentQuestion.choices[correctAnswerIndex]
-                ? 'correct'
-                : 'incorrect';
+        const classToApply = selectedAnswer === currentQuestion.choices[correctAnswerIndex]
+            ? 'correct'
+            : 'incorrect';
 
-            if (classToApply === 'correct') {
-                incrementScore(CORRECT_BONUS); // Increment score with streak bonus
+        if (classToApply === 'correct') {
+            incrementScore(CORRECT_BONUS, currentQuestion.difficulty); // Use per-question difficulty
+        }
+
+        selectedChoice.parentElement.classList.add(classToApply);
+
+        if (classToApply === 'incorrect' && correctChoice) {
+            correctChoice.parentElement.classList.add('correct-answer');
+            if (correctStreak !== -1) {
+                correctStreak = 0; // Reset streak on incorrect answer
             }
+        }
 
-            selectedChoice.parentElement.classList.add(classToApply);
+        streakText.innerText = `${correctStreak}`; // Update streak display
 
-            if (classToApply === 'incorrect' && correctChoice) {
-                correctChoice.parentElement.classList.add('correct-answer');
-                if (correctStreak !== -1) {
-                    correctStreak = 0; // Reset streak on incorrect answer
-                }
+        setTimeout(() => {
+            selectedChoice.parentElement.classList.remove(classToApply);
+            if (correctChoice) {
+                correctChoice.parentElement.classList.remove('correct-answer');
             }
-
-            streakText.innerText = `${correctStreak}`; // Update streak display
-
-            // Remove the class after a short delay
-            setTimeout(() => {
-                selectedChoice.parentElement.classList.remove(classToApply);
-                if (correctChoice) {
-                    correctChoice.parentElement.classList.remove('correct-answer');
-                }
-                getNewQuestion();
-            }, 1000);
-        });
+            getNewQuestion();
+        }, 1000);
+    });
     choiceContainer.appendChild(prefix);
     choiceContainer.appendChild(choice);
     choicesContainer.appendChild(choiceContainer);
-    });
+  });
 };
 
-
-// Function to get a new question
 const getNewQuestion = () => {
     if (availableQuestions.length === 0) {
-        // No more questions, end the game
         localStorage.setItem('mostRecentScore', score);
         return window.location.assign('./end.html');
     }
 
     questionCounter++;
-    const totalQuestions = triviaAmount; // Get the total number of questions
+    const totalQuestions = triviaAmount;
     progressText.innerText = `Question ${questionCounter} of ${totalQuestions}`;
     progressBarFull.style.width = `${(questionCounter / totalQuestions) * 100}%`;
 
@@ -109,17 +111,19 @@ const getNewQuestion = () => {
     acceptingAnswers = true;
 };
 
-// Function to increment score
-const incrementScore = (num) => {
+const incrementScore = (baseScore, difficulty) => {
+    const multiplier = DIFFICULTY_MULTIPLIERS[difficulty] || 1.0;
+    let finalScore = baseScore * multiplier;
+
     if (correctStreak !== -1) {
-        num += correctStreak; // Add streak bonus
-        correctStreak++; // Increase streak
+        finalScore += correctStreak;
+        correctStreak++;
     }
-    score += num;
+
+    score += Math.round(finalScore);
     scoreText.innerText = score;
 };
 
-// Function to start the game
 const startGame = () => {
     questionCounter = 0;
     score = 0;
@@ -129,7 +133,6 @@ const startGame = () => {
     loader.classList.add('hidden');
 };
 
-// Get parameters for url
 const params = new URLSearchParams(window.location.search);
 const triviaAmount = params.get('Amount');
 const triviaCategory = params.get('Category');
@@ -139,7 +142,6 @@ const triviaStreak = params.get('Streak');
 if (triviaStreak === 'true') {
     correctStreak = 0;
 } else {
-    // Hide html element if streak is not enabled
     streakHud.classList.add('hidden');
     streak.classList.add('hidden');
 }
@@ -154,21 +156,17 @@ if (triviaDifficulty !== 'any') {
     apiUrl += `&difficulty=${triviaDifficulty}`;
 }
 
-// apiUrl += '&type=multiple';
-
 fetch(apiUrl)
     .then((res) => res.json())
     .then((loadedQuestions) => {
-        // Check if the API returned an error
         if (loadedQuestions.response_code !== 0) {
             console.error('Error fetching questions:', loadedQuestions.response_code);
             return;
         }
-        // Decode the HTML entities
+
         questions = loadedQuestions.results.map((loadedQuestion) => {
             const parser = new DOMParser();
             const decodedQuestion = parser.parseFromString(`<!doctype html><body>${loadedQuestion.question}`, 'text/html').body.textContent;
-
             const decodedCorrect = parser.parseFromString(`<!doctype html><body>${loadedQuestion.correct_answer}`, 'text/html').body.textContent;
             const decodedIncorrect = loadedQuestion.incorrect_answers.map(ans =>
                 parser.parseFromString(`<!doctype html><body>${ans}`, 'text/html').body.textContent
@@ -176,13 +174,13 @@ fetch(apiUrl)
 
             const formattedQuestion = {
                 question: decodedQuestion,
+                difficulty: loadedQuestion.difficulty
             };
 
             const isTrueFalse = loadedQuestion.type === 'boolean';
             let answerChoices;
 
             if (isTrueFalse) {
-                // Force consistent order: True first, then False
                 answerChoices = ['True', 'False'];
                 formattedQuestion.answer = decodedCorrect === 'True' ? 1 : 2;
             } else {
